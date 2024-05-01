@@ -4,6 +4,6 @@ export type LikesPostsType={
     postId:string,//из url адреса
     userId: string,// из AccessToken
     login: string,// из AccessToken
-    addedAt:Date,
+    addedAt:string,
     statusLike:StatusLike //из body адреса
 }

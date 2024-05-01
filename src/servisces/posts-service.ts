@@ -128,7 +128,7 @@ export const postsSevrice = {
         userData:OutputUser) {
 
         const userId = userData.id
-        const date = new Date()
+        const date = new Date().toISOString()
 
         /*    ищу в базе Лайков  один документ   по
                 двум полям userData.userId и postId---*/

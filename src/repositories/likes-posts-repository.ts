@@ -16,7 +16,7 @@ export const LikesPostsRepository = {
     async setNewAddedAtNewStatusLike(
         userId:string,
         postId:string,
-        date:Date,
+        date:string,
         statusLike:StatusLike){
         return LikesPostsModel.findOneAndUpdate(
             {userId,postId},

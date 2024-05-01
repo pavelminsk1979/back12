@@ -102,7 +102,7 @@ const LikesPostsScheme = new mongoose.Schema({
     postId:String,
     userId: String,
     login: String,
-    addedAt:Date,
+    addedAt:String,
     statusLike: {
         type: String,
         enum: Object.values(StatusLike)
