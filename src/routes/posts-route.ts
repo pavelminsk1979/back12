@@ -61,11 +61,27 @@ postsRoute.get('/:id', async (req: RequestWithParams<IdStringGetAndDeleteModel>,
 })
 
 
-postsRoute.post('/', authMiddleware,
+postsRoute.post('/',
+    authMiddleware,
     createAndUpdateValidationPosts(),
-    errorValidationBlogs, async (req: RequestWithBody<CreateAndUpdatePostModel>, res: Response) => {
-        const newPost = await postsSevrice.createPost(req.body)
-        res.status(STATUS_CODE.CREATED_201).send(newPost)
+    errorValidationBlogs,
+    async (req: RequestWithBody<CreateAndUpdatePostModel>, res: Response) => {
+
+        try {
+            /* создать новый пост  и вернуть данные этого поста и также структуру данных(снулевыми значениями)  о лайках к этому посту*/
+
+            const newPost = await postsSevrice.createPost(req.body)
+
+            if (newPost) {
+                return res.status(STATUS_CODE.CREATED_201).send(newPost)
+            } else {
+                return res.sendStatus(STATUS_CODE.NOT_FOUND_404)
+            }
+
+        } catch (error) {
+            console.log(' FIlE post-routes.ts post-/...' + error)
+            return res.sendStatus(STATUS_CODE.SERVER_ERROR_500)
+        }
     })
 
 

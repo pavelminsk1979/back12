@@ -1,4 +1,4 @@
-import {Post} from "../allTypes/postTypes";
+import {OutputPost, OutputPostWithLikeInfo, Post} from "../allTypes/postTypes";
 import {CreateAndUpdatePostModel} from "../models/CreateAndUpdatePostModel";
 import {postsRepository} from "../repositories/posts-repository-mongoDB";
 import {blogQueryRepository} from "../repositories/blog-query-repository";
@@ -11,8 +11,6 @@ import {StatusLike} from "../allTypes/LikesCommentsTypes";
 import {OutputUser} from "../allTypes/userTypes";
 import {LikesPostsRepository} from "../repositories/likes-posts-repository";
 import {LikesPostsType} from "../allTypes/LikesPostsType";
-
-
 
 
 export const postsSevrice = {
@@ -38,24 +36,23 @@ export const postsSevrice = {
             blogName: blogName ? blogName : 'someBlogName',
             createdAt: new Date().toISOString()
         }
+
+        //тут поместили в базу новый документ постов
         const result = await postsRepository.createPost(newPost)
 
 
-        if (result._id.toString()) {
-            return {
-                title: newPost.title,
-                shortDescription: newPost.shortDescription,
-                content: newPost.content,
-                blogId: newPost.blogId,
-                blogName: newPost.blogName,
-                createdAt: newPost.createdAt,
-                id: result._id.toString()
-            }
-        } else {
-            return null
-        }
+        // теперь надо создать структуру которую
+        //ожидает фронтенд (cогласно Swager)
+
+        const postId = result._id.toString()
+
+        const postWithLikeInfo: OutputPostWithLikeInfo | null = await postQueryRepository.getPostByIdWithLikeInfo(postId)
+
+
+        return postWithLikeInfo
 
     },
+
 
 
     async updatePost(id: string, requestBodyPost: CreateAndUpdatePostModel) {
@@ -81,12 +78,12 @@ export const postsSevrice = {
 //эту проверку можно в мидлвеер перенести
         const post = await postQueryRepository.findPostById(postId)
         if (!post) return {
-            code:ResultCode.NotFound,
-            errorMessage:`Not found postId: ${postId}`,
-            data:null
+            code: ResultCode.NotFound,
+            errorMessage: `Not found postId: ${postId}`,
+            data: null
         }
 
-            //создается структура одного документа-коментария
+        //создается структура одного документа-коментария
         // ее  буду в базу  Коментариев помещать
         const commentatorInfo: CommentatorInfo = {
             userId,
@@ -105,19 +102,19 @@ export const postsSevrice = {
 
         const idComment = result._id.toString()
 
-        if(!idComment) return {
-            code:ResultCode.NotFound,
-            errorMessage:`Not found idComment: ${idComment} `,
-            data:null
+        if (!idComment) return {
+            code: ResultCode.NotFound,
+            errorMessage: `Not found idComment: ${idComment} `,
+            data: null
         }
 
         const newComment = await commentsQueryRepository.findCommentById(idComment)
 
 
         return {
-            code:ResultCode.Success,
-            errorMessage:'',
-            data:newComment
+            code: ResultCode.Success,
+            errorMessage: '',
+            data: newComment
         }
     },
 
@@ -125,7 +122,7 @@ export const postsSevrice = {
     async setOrUpdateLikeStatus(
         postId: string,
         statusLike: StatusLike,
-        userData:OutputUser) {
+        userData: OutputUser) {
 
         const userId = userData.id
         const date = new Date().toISOString()
@@ -140,12 +137,12 @@ export const postsSevrice = {
         /*Если документа  нет тогда надо cоздать
          новый документ и добавить в базу*/
 
-        if(!document){
-            const documentForLikePostCollection:LikesPostsType = {
+        if (!document) {
+            const documentForLikePostCollection: LikesPostsType = {
                 postId,
                 userId: userId,
                 login: userData.login,
-                addedAt:date,
+                addedAt: date,
                 statusLike
             }
             return LikesPostsRepository.addNewDocument(documentForLikePostCollection)
@@ -154,7 +151,7 @@ export const postsSevrice = {
         /*Если документ есть тогда надо изменить
       statusLike на приходящий и установить теперещнюю дату
        установки статуса лайка*/
-return LikesPostsRepository.setNewAddedAtNewStatusLike(userId,postId,date,statusLike)
+        return LikesPostsRepository.setNewAddedAtNewStatusLike(userId, postId, date, statusLike)
     },
 
 }

@@ -113,6 +113,9 @@ describe('/like_posts', () => {
 
         idPost = res.body.id
 
+        console.log(res.body)
+
+
     })
 
 

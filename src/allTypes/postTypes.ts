@@ -1,3 +1,4 @@
+import {StatusLike} from "./LikesCommentsTypes";
 
 export type Post = {
     title: string
@@ -48,3 +49,26 @@ export type PaginationWithOutputPosts<I> = {
     items:I[]
 }
 
+type NewestLikes = {
+    addedAt:string,
+    userId:string,
+    login:string
+}
+
+type ExtendedLikesInfo = {
+    likesCount:number,
+    dislikesCount:number,
+    myStatus:StatusLike,
+    newestLikes:NewestLikes[]
+}
+
+export type OutputPostWithLikeInfo = {
+    id: string
+    title: string
+    shortDescription: string
+    content: string
+    blogId: string
+    blogName: string
+    createdAt:string
+    extendedLikesInfo:ExtendedLikesInfo
+}

@@ -2,6 +2,7 @@ import {OutputPost, PaginationWithOutputPosts, Post, SortDataPost} from "../allT
 import { postssModel} from "../db/mongoDb";
 import {postMaper} from "../mapers/postMaper";
 import {ObjectId} from "mongodb";
+import {postWithLikeInfoMaper} from "../mapers/postWithLikeInfoMaper";
 
 
 export const postQueryRepository = {
@@ -43,4 +44,13 @@ export const postQueryRepository = {
             return null
         }
     },
+
+    async getPostByIdWithLikeInfo(postId:string){
+
+        const post = await postssModel.findOne({_id: new ObjectId(postId)})
+
+        if(!post) return null
+
+        return postWithLikeInfoMaper(post)
+    }
 }

@@ -10,9 +10,7 @@ export const postsRepository = {
 
 
     async createPost(newPost: Post) {
-        const result = await postssModel.create(newPost)
-        return result
-
+        return  postssModel.create(newPost)
     },
 
 
