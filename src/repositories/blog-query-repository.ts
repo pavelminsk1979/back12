@@ -81,7 +81,9 @@ export const blogQueryRepository = {
 
 
     async findBlogById(id: string) {
+
         const blog = await blogsModel.findOne({_id: new ObjectId(id)})
+
         if (blog) {
             return blogMaper(blog)
         } else {

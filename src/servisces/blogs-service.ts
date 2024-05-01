@@ -2,7 +2,7 @@ import {CreateAndUpdateBlogModel} from "../models/CreateAndUpdateBlogModel";
 import {Blog} from "../allTypes/blogTypes";
 import {blogsRepository} from "../repositories/blogs-repository-mongoDB";
 import {blogQueryRepository} from "../repositories/blog-query-repository";
-import {CreatePostInputModel, Post} from "../allTypes/postTypes";
+import {CreatePostInputModel, OutputPostWithLikeInfo, Post} from "../allTypes/postTypes";
 import {postsRepository} from "../repositories/posts-repository-mongoDB";
 import {postQueryRepository} from "../repositories/post-query-repository";
 
@@ -55,18 +55,19 @@ export const blogsSevrice = {
             createdAt: new Date().toISOString()
         }
 
+//тут поместили в базу новый документ- пост
         const createdPost = await postsRepository.createPost(newPost)
 
         if (!createdPost) {
             return null
         }
 
-        const post = await postQueryRepository.findPostById(createdPost._id.toString())
 
-        if (!post) {
-            return null
-        }
-        return post
+        // теперь надо создать структуру которую
+        //ожидает фронтенд (cогласно Swager)
+        const postWithLikeInfo:OutputPostWithLikeInfo | null = await postQueryRepository.getPostByIdWithLikeInfo(createdPost._id.toString())
+
+        return postWithLikeInfo
 
     },
 

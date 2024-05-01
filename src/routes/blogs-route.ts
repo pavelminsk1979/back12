@@ -95,23 +95,25 @@ blogsRoute.post('/', authMiddleware, postValidationBlogs(), errorValidationBlogs
 
 
 
-blogsRoute.post('/:blogId/posts', authMiddleware, validatorCreatePostForCorrectBlog(), errorValidationBlogs, async (req: RequestWithParamsWithBody<ParamBlogId,CreatePostFromCorrectBlogInputModel>, res: Response) => {
+blogsRoute.post('/:blogId/posts',
+    authMiddleware,
+    validatorCreatePostForCorrectBlog(),
+    errorValidationBlogs,
+    async (req: RequestWithParamsWithBody<ParamBlogId,CreatePostFromCorrectBlogInputModel>, res: Response) => {
+
+    /* создать новый пост ДЛЯ КОНКРЕТНОГО БЛОГА и вернуть данные этого поста и также структуру данных(снулевыми значениями)  о лайках к этому посту*/
 
     const blogId = req.params.blogId
 
-    if(!ObjectId.isValid(blogId)){
-        res.sendStatus(STATUS_CODE.UNAUTHORIZED_401)
-        return
-    }
 
     const post = await blogsSevrice.createPostFromBlog(req.body,blogId)
 
     if(!post){
-        res.sendStatus(STATUS_CODE.NOT_FOUND_404)
-        return
+        return res.sendStatus(STATUS_CODE.NOT_FOUND_404)
+
     }
 
-    res.status(STATUS_CODE.CREATED_201).send(post)
+   return  res.status(STATUS_CODE.CREATED_201).send(post)
 
 })
 
