@@ -7,6 +7,7 @@ import {Visit} from "../allTypes/visitTypes";
 import {UsersDevices} from "../allTypes/usersDevicesTypes";
 import mongoose from 'mongoose'
 import {LikeComment, StatusLike} from "../allTypes/LikesCommentsTypes";
+import {LikesPostsType} from "../allTypes/LikesPostsType";
 
 
 dotenv.config()
@@ -96,6 +97,19 @@ const LikesCommentsScheme = new mongoose.Schema({
 });
 
 export const LikesCommentsModel = mongoose.model<LikeComment>('likes_comments', LikesCommentsScheme);
+
+const LikesPostsScheme = new mongoose.Schema({
+    postId:String,
+    userId: String,
+    login: String,
+    addedAt:Date,
+    statusLike: {
+        type: String,
+        enum: Object.values(StatusLike)
+    }
+})
+
+export const LikesPostsModel = mongoose.model<LikesPostsType>('likes_posts',LikesPostsScheme)
 
 
 export async function runDb() {

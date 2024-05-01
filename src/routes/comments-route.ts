@@ -36,9 +36,6 @@ commentsRoute.get('/:id', idMiddleware, isExistCommentMiddlewareById, idUserFrom
             req.params.id,
             req.userId)
 
-    /*    console.log('+++++++++++++')
-        console.log(comment)
-        console.log('+++++++++++++')*/
 
         if (comment) {
             return res.status(STATUS_CODE.SUCCESS_200).send(comment)

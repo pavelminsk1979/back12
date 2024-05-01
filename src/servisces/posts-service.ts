@@ -7,6 +7,10 @@ import {Comment, CommentatorInfo} from "../allTypes/commentTypes";
 import {commentsRepository} from "../repositories/comments/comments-repository";
 import {commentsQueryRepository} from "../repositories/comments/comments-query-repository";
 import {ResultCode} from "../common/object-result";
+import {StatusLike} from "../allTypes/LikesCommentsTypes";
+import {OutputUser} from "../allTypes/userTypes";
+import {LikesPostsRepository} from "../repositories/likes-posts-repository";
+import {LikesPostsType} from "../allTypes/LikesPostsType";
 
 
 
@@ -115,9 +119,42 @@ export const postsSevrice = {
             errorMessage:'',
             data:newComment
         }
-    }
+    },
 
 
+    async setOrUpdateLikeStatus(
+        postId: string,
+        statusLike: StatusLike,
+        userData:OutputUser) {
 
+        const userId = userData.id
+        const date = new Date()
+
+        /*    ищу в базе Лайков  один документ   по
+                двум полям userData.userId и postId---*/
+        const document = await LikesPostsRepository.findDocumentByUserIdAndPostId(
+            postId,
+            userId
+        )
+
+        /*Если документа  нет тогда надо cоздать
+         новый документ и добавить в базу*/
+
+        if(!document){
+            const documentForLikePostCollection:LikesPostsType = {
+                postId,
+                userId: userId,
+                login: userData.login,
+                addedAt:date,
+                statusLike
+            }
+            return LikesPostsRepository.addNewDocument(documentForLikePostCollection)
+        }
+
+        /*Если документ есть тогда надо изменить
+      statusLike на приходящий и установить теперещнюю дату
+       установки статуса лайка*/
+return LikesPostsRepository.setNewAddedAtNewStatusLike(userId,postId,date,statusLike)
+    },
 
 }

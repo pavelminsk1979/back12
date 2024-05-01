@@ -26,6 +26,8 @@ import {commentsQueryRepository} from "../repositories/comments/comments-query-r
 import {postIdMiddleware} from "../middlewares/postsMiddlewares/postIdMiddleware";
 import {isExistPostByPostIdMiddleware} from "../middlewares/postsMiddlewares/isExistPostByPostIdMiddleware";
 import {idUserFromAccessTokenMiddleware} from "../middlewares/authMiddleware/idUserFromAccessTokenMiddleware";
+import {likeStatusValidation} from "../middlewares/commentsMiddleware/likeStatusValidation";
+import {LikeStatusBodyModel} from "../models/LikeStatusBodyModel";
 
 
 export const postsRoute = Router({})
@@ -172,6 +174,35 @@ postsRoute.get('/:postId/comments',postIdMiddleware,isExistPostByPostIdMiddlewar
     }
 
 })
+
+
+
+//для поста установить или изменить статус (None,Like,Dislike)
+postsRoute.put('/:postId/like-status',
+    isExistPostByPostIdMiddleware,
+    authTokenMiddleware, //  внутрь req  будут добавлены  idUser,
+    // loginUser,emailUser,createdAtUser(тип-OutputUser)
+   // и в файле src/types/index.d.ts  типизация добавлена для req
+    likeStatusValidation,
+    errorValidationBlogs,
+    async (req: RequestWithParamsWithBody<CreateComentPostIdModel, LikeStatusBodyModel>, res: Response) => {
+
+    try {
+        await postsSevrice.setOrUpdateLikeStatus(
+            req.params.postId,
+            req.body.likeStatus,
+            req.userIdLoginEmail
+        )
+
+        return res.sendStatus(STATUS_CODE.NO_CONTENT_204)
+    }catch (error) {
+        console.log(' FIlE posts-routes.ts put-/:postId/like-status...' + error)
+        return res.sendStatus(STATUS_CODE.SERVER_ERROR_500)
+    }
+
+
+    })
+
 
 
 
