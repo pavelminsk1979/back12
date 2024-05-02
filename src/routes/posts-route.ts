@@ -28,12 +28,18 @@ import {isExistPostByPostIdMiddleware} from "../middlewares/postsMiddlewares/isE
 import {idUserFromAccessTokenMiddleware} from "../middlewares/authMiddleware/idUserFromAccessTokenMiddleware";
 import {likeStatusValidation} from "../middlewares/commentsMiddleware/likeStatusValidation";
 import {LikeStatusBodyModel} from "../models/LikeStatusBodyModel";
+import {idMiddleware} from "../middlewares/commentsMiddleware/idMiddleware";
+import {isExistPostByIdMiddleware} from "../middlewares/postsMiddlewares/isExistPostByIdMiddleware";
 
 
 export const postsRoute = Router({})
 
 
-const createAndUpdateValidationPosts = () => [titleValidationPosts, shortDescriptionValidationPosts, contentValidationPosts, blogIdValidationPosts]
+const createAndUpdateValidationPosts = () => [
+    titleValidationPosts,
+    shortDescriptionValidationPosts,
+    contentValidationPosts,
+    blogIdValidationPosts]
 
 postsRoute.get('/', async (req: RequestWithQuery<QueryBlogInputModal>, res: Response) => {
 
@@ -50,13 +56,32 @@ postsRoute.get('/', async (req: RequestWithQuery<QueryBlogInputModal>, res: Resp
 })
 
 
-postsRoute.get('/:id', async (req: RequestWithParams<IdStringGetAndDeleteModel>, res: Response) => {
-    const post = await postQueryRepository.findPostById(req.params.id)
-    if (post) {
-        res.status(STATUS_CODE.SUCCESS_200).send(post)
-    } else {
-        res.sendStatus(STATUS_CODE.NOT_FOUND_404)
+postsRoute.get('/:id',
+    idMiddleware,
+    isExistPostByIdMiddleware,
+    idUserFromAccessTokenMiddleware,
+    async (req: RequestWithParams<IdStringGetAndDeleteModel>, res: Response) => {
+
+    try {
+        /*вернуть данные одного поста  и внутри
+        данные по лайкам этого поста и также массив
+        с тремя -ТЕ КТО ЛАЙКНУЛ*/
+
+        const post = await postQueryRepository.findPostByIdWithLikeInfo(req.params.id,req.userId)
+
+        //req userId:string|null  src/types/index.d.ts
+
+        if (post) {
+            return  res.status(STATUS_CODE.SUCCESS_200).send(post)
+        } else {
+            return  res.sendStatus(STATUS_CODE.NOT_FOUND_404)
+        }
+
+    }catch (error) {
+        console.log(' FIlE post-routes.ts get-/:id...' + error)
+        return res.sendStatus(STATUS_CODE.SERVER_ERROR_500)
     }
+
 
 })
 
@@ -85,7 +110,8 @@ postsRoute.post('/',
     })
 
 
-postsRoute.put('/:id', authMiddleware,
+postsRoute.put('/:id',
+    authMiddleware,
     createAndUpdateValidationPosts(),
     errorValidationBlogs, async (req: RequestWithParamsWithBody<IdStringGetAndDeleteModel, CreateAndUpdatePostModel>, res: Response) => {
         const isUpdatePost = await postsSevrice.updatePost(req.params.id, req.body)
@@ -97,7 +123,9 @@ postsRoute.put('/:id', authMiddleware,
     })
 
 
-postsRoute.delete('/:id', authMiddleware, async (req: RequestWithParams<IdStringGetAndDeleteModel>, res: Response) => {
+postsRoute.delete('/:id',
+    authMiddleware,
+    async (req: RequestWithParams<IdStringGetAndDeleteModel>, res: Response) => {
     const isPostDelete = await postsSevrice.deletePostById(req.params.id)
     if (isPostDelete) {
         res.sendStatus(STATUS_CODE.NO_CONTENT_204)
@@ -108,7 +136,11 @@ postsRoute.delete('/:id', authMiddleware, async (req: RequestWithParams<IdString
 
 
 
-postsRoute.post('/:postId/comments',postIdMiddleware, authTokenMiddleware, contentValidationComments, errorValidationBlogs, async (req: RequestWithParamsWithBody<CreateComentPostIdModel, CreateComentBodyModel>, res: Response) => {
+postsRoute.post('/:postId/comments',
+    postIdMiddleware,
+    authTokenMiddleware,
+    contentValidationComments,
+    errorValidationBlogs, async (req: RequestWithParamsWithBody<CreateComentPostIdModel, CreateComentBodyModel>, res: Response) => {
 
     try {
         // создать новый коментарий для корректного
@@ -143,7 +175,11 @@ postsRoute.post('/:postId/comments',postIdMiddleware, authTokenMiddleware, conte
 
 
 
-postsRoute.get('/:postId/comments',postIdMiddleware,isExistPostByPostIdMiddleware,idUserFromAccessTokenMiddleware, async (req: RequestWithParamsWithQuery<CreateComentPostIdModel, QueryInputModalGetCommentsForCorrectPost>, res: Response) => {
+postsRoute.get('/:postId/comments',
+    postIdMiddleware,
+    isExistPostByPostIdMiddleware,
+    idUserFromAccessTokenMiddleware,
+    async (req: RequestWithParamsWithQuery<CreateComentPostIdModel, QueryInputModalGetCommentsForCorrectPost>, res: Response) => {
     //вернуть все коментарии(массив) корректного поста
     //и у каждого коментария будут данные о лайках
     //к этому коментарию

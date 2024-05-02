@@ -49,13 +49,13 @@ export type PaginationWithOutputPosts<I> = {
     items:I[]
 }
 
-type NewestLikes = {
+ export type NewestLikes = {
     addedAt:string,
     userId:string,
     login:string
 }
 
-type ExtendedLikesInfo = {
+export type ExtendedLikesInfo = {
     likesCount:number,
     dislikesCount:number,
     myStatus:StatusLike,
