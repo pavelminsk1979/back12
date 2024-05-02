@@ -11,7 +11,7 @@ import {contentValidationPosts} from "../middlewares/postsMiddlewares/contentVal
 import {blogIdValidationPosts} from "../middlewares/postsMiddlewares/blogIdValidationPosts";
 import {errorValidationBlogs} from "../middlewares/blogsMiddelwares/errorValidationBlogs";
 import {RequestWithParamsWithBody} from "../allTypes/RequestWithParamsWithBody";
-import {QueryBlogInputModal} from "../allTypes/postTypes";
+import {OutputPostWithLikeInfo, PaginationWithOutputPosts, QueryBlogInputModal} from "../allTypes/postTypes";
 import {postsSevrice} from "../servisces/posts-service";
 import {postQueryRepository} from "../repositories/post-query-repository";
 import {RequestWithQuery} from "../allTypes/RequestWithQuery";
@@ -41,7 +41,19 @@ const createAndUpdateValidationPosts = () => [
     contentValidationPosts,
     blogIdValidationPosts]
 
-postsRoute.get('/', async (req: RequestWithQuery<QueryBlogInputModal>, res: Response) => {
+postsRoute.get('/',
+    idUserFromAccessTokenMiddleware,
+    async (req: RequestWithQuery<QueryBlogInputModal>, res: Response) => {
+
+        //вернуть все posts(массив)
+        //и у каждого поста  будут данные о лайках
+
+
+
+
+    //Оператор ??- оператор нулевого слияния
+    //Если req.query.sortBy равно null или undefined, то
+    // переменная sortBy будет равна 'createdAt'.
 
     const sortDataPost = {
         pageNumber: req.query.pageNumber ? +req.query.pageNumber : 1,
@@ -50,9 +62,19 @@ postsRoute.get('/', async (req: RequestWithQuery<QueryBlogInputModal>, res: Resp
         sortDirection: req.query.sortDirection ?? 'desc',
     }
 
-    const posts = await postQueryRepository.getPosts(sortDataPost)
+    try {
+        const posts : PaginationWithOutputPosts<OutputPostWithLikeInfo> = await postQueryRepository.getPosts(
+            sortDataPost,
+            req.userId)
 
-    res.status(STATUS_CODE.SUCCESS_200).send(posts)
+        return res.status(STATUS_CODE.SUCCESS_200).send(posts)
+
+    } catch (error) {
+        console.log(' FIlE post-routes.ts get-/...' + error)
+        return res.sendStatus(STATUS_CODE.SERVER_ERROR_500)
+    }
+
+
 })
 
 

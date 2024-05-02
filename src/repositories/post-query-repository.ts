@@ -6,17 +6,24 @@ import {postWithLikeInfoMaper} from "../mapers/postWithLikeInfoMaper";
 import {StatusLike} from "../allTypes/LikesCommentsTypes";
 import {LikesPostsType} from "../allTypes/LikesPostsType";
 import {newPostMapper} from "../mapers/newPostMapper";
+import {arrayPostsWithLikeInfoMapper} from "../mapers/arrayPostsWithLikeInfoMapper";
 
 
 export const postQueryRepository = {
 
-    async getPosts(sortDataPost: SortDataPost): Promise<PaginationWithOutputPosts<OutputPost>> {
+    async getPosts(
+        sortDataPost: SortDataPost,
+        userId: string | null
+    ): Promise<PaginationWithOutputPosts<OutputPost>> {
 
-        const {sortBy, sortDirection, pageNumber, pageSize} = sortDataPost
+        const {sortBy,
+            sortDirection,
+            pageNumber,
+            pageSize} = sortDataPost
 
         const sortDirectionValue = sortDirection === 'asc' ? 1 : -1;
 
-        const posts = await postssModel
+        const arrayDocumentsPosts : WithId<Post> [] = await postssModel
             .find({})
             .sort({[sortBy]: sortDirectionValue})
             .skip((pageNumber - 1) * pageSize)
@@ -28,12 +35,39 @@ export const postQueryRepository = {
         const pagesCount = Math.ceil(totalCount / pageSize)
 
 
+        /*arrayDocumentsPosts это массив постов type WithId<Post> ,
+         далее достану из каждого обьекта _id(aйдишка поста)
+         буду иметь массив айдишек постов*/
+        const arrayIdPosts = arrayDocumentsPosts.map(e=>e._id.toString())
+
+
+        /*далее из коллекции like_post:LikesPostsType
+         достану все документы у которых postId такаяже
+          как в массиве айдишек arrayIdPosts*/
+        const arrayDocumentsFromLikePostCollection : LikesPostsType[] = await LikesPostsModel.find({
+            postId:{$in:arrayIdPosts}
+        })
+
+
+        /*создаю массив постов с информацией о лайках и буду его
+        * отправлять на фронтенд
+        * ТО ЧТО ЕСТЬ items  из этого типа
+        * PaginationWithOutputPosts<OutputPostWithLikeInfo>
+         то я здесь и создаю.... это массив-OutputPostWithLikeInfo*/
+
+        const arrayPosts = arrayPostsWithLikeInfoMapper(
+            userId, // для myStatus
+            arrayDocumentsPosts,
+            arrayDocumentsFromLikePostCollection,
+
+        )
+
         return {
             pagesCount,
             page: pageNumber,
             pageSize,
             totalCount,
-            items: posts.map(postMaper)
+            items: arrayPosts
         }
 
     },
@@ -84,12 +118,12 @@ export const postQueryRepository = {
 
         //из базы достаю число   - сколько документов в базе
         //есть у которых postId определенная и StatusLike.Like
-        const likesCount : number = await LikesPostsModel.countDocuments({
+        const likesCount: number = await LikesPostsModel.countDocuments({
             postId,
             statusLike: StatusLike.Like
         });
 
-        const dislikesCount : number = await LikesPostsModel.countDocuments({
+        const dislikesCount: number = await LikesPostsModel.countDocuments({
             postId,
             statusLike: StatusLike.Dislike
         })
@@ -101,7 +135,7 @@ export const postQueryRepository = {
          внутри threeLatestDocumentWithStatusLike будет
          массив из 3 документов*/
 
-        const threeLatestDocumentWithStatusLike : LikesPostsType[]  = await LikesPostsModel.find({
+        const threeLatestDocumentWithStatusLike: LikesPostsType[] = await LikesPostsModel.find({
             postId, statusLike: StatusLike.Like
         }).sort({addedAt: -1}).limit(3)
 
