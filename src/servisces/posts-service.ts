@@ -125,7 +125,7 @@ export const postsSevrice = {
         userData: OutputUser) {
 
         const userId = userData.id
-        const date = new Date().toISOString()
+
 
         /*    ищу в базе Лайков  один документ   по
                 двум полям userData.userId и postId---*/
@@ -142,7 +142,7 @@ export const postsSevrice = {
                 postId,
                 userId: userId,
                 login: userData.login,
-                addedAt: date,
+                addedAt: new Date().toISOString(),
                 statusLike
             }
             return LikesPostsRepository.addNewDocument(documentForLikePostCollection)
@@ -151,6 +151,7 @@ export const postsSevrice = {
         /*Если документ есть тогда надо изменить
       statusLike на приходящий и установить теперещнюю дату
        установки статуса лайка*/
+        const date = new Date().toISOString()
         return LikesPostsRepository.setNewAddedAtNewStatusLike(userId, postId, date, statusLike)
     },
 
