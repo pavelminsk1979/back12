@@ -7,6 +7,7 @@ import {StatusLike} from "../allTypes/LikesCommentsTypes";
 import {LikesPostsType} from "../allTypes/LikesPostsType";
 import {newPostMapper} from "../mapers/newPostMapper";
 import {arrayPostsWithLikeInfoMapper} from "../mapers/arrayPostsWithLikeInfoMapper";
+import {createArrayPostsWithInfoLikeService} from "../servisces/create-array-posts-with-infoLike-service";
 
 
 export const postQueryRepository = {
@@ -35,35 +36,36 @@ export const postQueryRepository = {
         const pagesCount = Math.ceil(totalCount / pageSize)
 
 
-        /*arrayDocumentsPosts это массив постов type WithId<Post> ,
+       /* /!*arrayDocumentsPosts это массив постов type WithId<Post> ,
          далее достану из каждого обьекта _id(aйдишка поста)
-         буду иметь массив айдишек постов*/
-        const arrayIdPosts = arrayDocumentsPosts.map(e=>e._id.toString())
+         буду иметь массив айдишек постов*!/
+        const arrayIdPosts = arrayDocumentsPosts.map(e=>e._id.toString())*/
 
 
-        /*далее из коллекции like_post:LikesPostsType
+     /*   /!*далее из коллекции like_post:LikesPostsType
          достану все документы у которых postId такиеже
-          как в массиве айдишек arrayIdPosts*/
+          как в массиве айдишек arrayIdPosts*!/
         const arrayDocumentsFromLikePostCollection : LikesPostsType[] = await LikesPostsModel.find({
             postId:{$in:arrayIdPosts}
-        })
+        })*/
 
 
 
 
 
-        /*создаю массив постов с информацией о лайках и буду его
+  /*      /!*создаю массив постов с информацией о лайках и буду его
          отправлять на фронтенд
          Создаю items  из  типа
         PaginationWithOutputPosts<OutputPostWithLikeInfo>
-         */
+         *!/
 
         const arrayPosts:OutputPostWithLikeInfo[] = arrayPostsWithLikeInfoMapper(
             userId, // для myStatus
             arrayDocumentsPosts,
             arrayDocumentsFromLikePostCollection,
+        )*/
 
-        )
+        const arrayPosts=await createArrayPostsWithInfoLikeService.createArrayPosts(arrayDocumentsPosts,userId)
 
         return {
             pagesCount,
