@@ -20,6 +20,7 @@ import {contentValidationPosts} from "../middlewares/postsMiddlewares/contentVal
 import {ParamBlogId} from "../allTypes/ParamBlogIdInputModel";
 import {ObjectId} from "mongodb";
 import {RequestWithParamsWithQuery} from "../allTypes/RequestWithParamsWithQuery";
+import {idUserFromAccessTokenMiddleware} from "../middlewares/authMiddleware/idUserFromAccessTokenMiddleware";
 
 
 
@@ -54,7 +55,13 @@ blogsRoute.get('/:id', async (req: RequestWithParams<IdStringGetAndDeleteModel>,
 })
 
 
-blogsRoute.get('/:blogId/posts', async (req: RequestWithParamsWithQuery<ParamBlogId,GetQueryBlogInputModal>, res: Response) => {
+blogsRoute.get('/:blogId/posts',
+    idUserFromAccessTokenMiddleware,
+    async (req: RequestWithParamsWithQuery<ParamBlogId,GetQueryBlogInputModal>, res: Response) => {
+
+        //вернуть все posts(массив) для корректного блога
+        //и у каждого поста  будут данные о лайках
+
 
     const blogId = req.params.blogId
 
@@ -70,15 +77,17 @@ blogsRoute.get('/:blogId/posts', async (req: RequestWithParamsWithQuery<ParamBlo
         pageSize: req.query.pageSize ? +req.query.pageSize : 10,
     }
 
-    const posts = await blogQueryRepository.getPostsForCorrectBlog(sortDataGetPostsForBlogs,blogId)
+    const posts = await blogQueryRepository.getPostsForCorrectBlog(sortDataGetPostsForBlogs,blogId,req.userId)
 
 
-    if(!posts){
-        res.sendStatus(STATUS_CODE.NOT_FOUND_404)
-        return
+    if(posts){
+
+        return res.status(STATUS_CODE.SUCCESS_200).send(posts)
+    }else {
+        return  res.sendStatus(STATUS_CODE.NOT_FOUND_404)
     }
 
-    res.status(STATUS_CODE.SUCCESS_200).send(posts)
+
 
 })
 
