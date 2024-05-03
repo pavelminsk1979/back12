@@ -15,7 +15,17 @@ export const newPostMapper=(
     /*1 ЭТАП  создаю массив newestLikes type NewestLikes[]
      для возвращаемого на фронт документа type OutputPostWithLikeInfo */
     const  newestLikes=[]
-    if(threeLatestDocumentWithStatusLike.length===0){
+
+    for(let i=0;i<threeLatestDocumentWithStatusLike.length; i++){
+        const obj:LikesPostsType = threeLatestDocumentWithStatusLike[i]
+        const entity : NewestLikes = {
+            addedAt:obj.addedAt ,
+            userId:obj.userId ,
+            login:obj.login
+        }
+        newestLikes.push(entity)
+    }
+/*    if(threeLatestDocumentWithStatusLike.length===0){
         newestLikes.push({
             addedAt:'',
             userId:'',
@@ -30,7 +40,7 @@ export const newPostMapper=(
             }
             newestLikes.push(entity)
         }
-    }
+    }*/
 
 /*2 ЭТАП  -создаю обьект  extendedLikesInfo type ExtendedLikesInfo
     для возвращаемого на фронт документа type OutputPostWithLikeInfo*/

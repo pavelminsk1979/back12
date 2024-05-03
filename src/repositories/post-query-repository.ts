@@ -1,4 +1,4 @@
-import {OutputPost, PaginationWithOutputPosts, Post, SortDataPost} from "../allTypes/postTypes";
+import {OutputPost, OutputPostWithLikeInfo, PaginationWithOutputPosts, Post, SortDataPost} from "../allTypes/postTypes";
 import {LikesPostsModel, postssModel} from "../db/mongoDb";
 import {postMaper} from "../mapers/postMaper";
 import {ObjectId, WithId} from "mongodb";
@@ -42,20 +42,23 @@ export const postQueryRepository = {
 
 
         /*далее из коллекции like_post:LikesPostsType
-         достану все документы у которых postId такаяже
+         достану все документы у которых postId такиеже
           как в массиве айдишек arrayIdPosts*/
         const arrayDocumentsFromLikePostCollection : LikesPostsType[] = await LikesPostsModel.find({
             postId:{$in:arrayIdPosts}
         })
 
 
-        /*создаю массив постов с информацией о лайках и буду его
-        * отправлять на фронтенд
-        * ТО ЧТО ЕСТЬ items  из этого типа
-        * PaginationWithOutputPosts<OutputPostWithLikeInfo>
-         то я здесь и создаю.... это массив-OutputPostWithLikeInfo*/
 
-        const arrayPosts = arrayPostsWithLikeInfoMapper(
+
+
+        /*создаю массив постов с информацией о лайках и буду его
+         отправлять на фронтенд
+         Создаю items  из  типа
+        PaginationWithOutputPosts<OutputPostWithLikeInfo>
+         */
+
+        const arrayPosts:OutputPostWithLikeInfo[] = arrayPostsWithLikeInfoMapper(
             userId, // для myStatus
             arrayDocumentsPosts,
             arrayDocumentsFromLikePostCollection,

@@ -63,7 +63,7 @@ postsRoute.get('/',
     }
 
     try {
-        const posts : PaginationWithOutputPosts<OutputPostWithLikeInfo> = await postQueryRepository.getPosts(
+        const posts  = await postQueryRepository.getPosts(
             sortDataPost,
             req.userId)
 

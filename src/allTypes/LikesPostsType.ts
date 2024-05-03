@@ -7,3 +7,6 @@ export type LikesPostsType={
     addedAt:string,
     statusLike:StatusLike //из body адреса
 }
+
+
+
