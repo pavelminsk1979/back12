@@ -9,20 +9,22 @@ export const newPostMapper=(
     documentLikePostAuthorisationUser:LikesPostsType|null,
     likesCount:number,
     dislikesCount:number,
-    threeLatestDocumentWithStatusLike: LikesPostsType[],
+    threeLatestDocumentWithStatusLike: NewestLikes[],
 ):OutputPostWithLikeInfo=>{
 
     /*1 ЭТАП  создаю массив newestLikes type NewestLikes[]
      для возвращаемого на фронт документа type OutputPostWithLikeInfo */
     const  newestLikes=[]
+
 if(threeLatestDocumentWithStatusLike.length>0){
     for(let i=0;i<threeLatestDocumentWithStatusLike.length; i++){
-        const obj:LikesPostsType = threeLatestDocumentWithStatusLike[i]
+        const obj:NewestLikes = threeLatestDocumentWithStatusLike[i]
+
         const entity : NewestLikes = {
             addedAt:obj.addedAt ,
             userId:obj.userId ,
-            login:obj.login
-        }
+            login:obj.login}
+
         newestLikes.push(entity)
     }
 }

@@ -66,7 +66,7 @@ postsRoute.get('/',
         const posts  = await postQueryRepository.getPosts(
             sortDataPost,
             req.userId)
-
+debugger
         return res.status(STATUS_CODE.SUCCESS_200).send(posts)
 
     } catch (error) {

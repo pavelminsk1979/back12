@@ -1,5 +1,5 @@
 import {WithId} from "mongodb";
-import {OutputPostWithLikeInfo, Post} from "../allTypes/postTypes";
+import {NewestLikes, OutputPostWithLikeInfo, Post} from "../allTypes/postTypes";
 import { LikesPostsType} from "../allTypes/LikesPostsType";
 import {StatusLike} from "../allTypes/LikesCommentsTypes";
 import {newPostMapper} from "./newPostMapper";
@@ -40,7 +40,9 @@ export const arrayPostsWithLikeInfoMapper = (
         const updateDocumentsLikePost =
             arrayOnlyLike.map(document => {
                 return {
-                    ...document, addedAt: new Date(document.addedAt)
+                    userId:document.userId,
+                    login:document.login,
+                    addedAt: new Date(document.addedAt)
                 }
             })
 
@@ -58,9 +60,11 @@ export const arrayPostsWithLikeInfoMapper = (
 
         //преобразую addedAt:Date в addedAt:string
 
-        const threeLatestDocumentWithStatusLike = arrayThreetDocumentWithStatusLike.map(document => {
+        const threeLatestDocumentWithStatusLike:NewestLikes[] = arrayThreetDocumentWithStatusLike.map(document => {
             return {
-                ...document, addedAt: document.addedAt.toISOString()
+                userId:document.userId,
+                login:document.login,
+                addedAt: document.addedAt.toISOString()
             }
         })
 
