@@ -16,11 +16,11 @@ export const postWithLikeInfoMaper=(post:WithId<Post>):OutputPostWithLikeInfo=>{
             dislikesCount:0,
             myStatus:StatusLike.None,
             newestLikes:[
-                {
+            /*    {
                     addedAt:'',
                     userId:'',
                     login:''
-                }
+                }*/
             ]
         }
     }

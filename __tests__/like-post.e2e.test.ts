@@ -112,6 +112,8 @@ describe('/like_posts', () => {
             .expect(STATUS_CODE.CREATED_201)
 
         idPost = res.body.id
+        console.log(res.body.extendedLikesInfo)
+
 
 
     })
@@ -123,7 +125,7 @@ describe('/like_posts', () => {
 
             .expect(STATUS_CODE.SUCCESS_200)
 
-        console.log(res.body.extendedLikesInfo.newestLikes)
+            //console.log(res.body.extendedLikesInfo)
     })
 
 
