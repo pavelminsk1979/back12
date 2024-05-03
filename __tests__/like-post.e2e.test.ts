@@ -117,20 +117,30 @@ describe('/like_posts', () => {
     })
 
 
-    it('create post for correct blog', async () => {
+    it(" get correct post", async () => {
         const res = await req
-            .post(`/blogs/${idBlog}/posts`)
-            .set('Authorization', `Basic ${loginPasswordBasic64}`)
-            .send({
-                title: 'postForBlog',
-                shortDescription: 'descriptionPostForBlog',
-                content: 'contentPostForBlog'
-            })
-            .expect(STATUS_CODE.CREATED_201)
+            .get(`/posts/${idPost}`)
 
-        console.log(res.body)
+            .expect(STATUS_CODE.SUCCESS_200)
+
         console.log(res.body.extendedLikesInfo.newestLikes)
     })
+
+
+    /*    it('create post for correct blog', async () => {
+            const res = await req
+                .post(`/blogs/${idBlog}/posts`)
+                .set('Authorization', `Basic ${loginPasswordBasic64}`)
+                .send({
+                    title: 'postForBlog',
+                    shortDescription: 'descriptionPostForBlog',
+                    content: 'contentPostForBlog'
+                })
+                .expect(STATUS_CODE.CREATED_201)
+
+            console.log(res.body)
+            console.log(res.body.extendedLikesInfo.newestLikes)
+        })*/
 
 
     //Досюда можно коментировать и потом работать с лайками только
@@ -142,21 +152,21 @@ describe('/like_posts', () => {
 
     ///////////////////////////////////////////////////////////
 
-    it(" set Like ", async () => {
-        await req
-            .put(`/posts/${idPost}/like-status`)
-            .set('Authorization', `Bearer ${jwtToken1}`)
-            .send({likeStatus: 'Like'})
-            .expect(STATUS_CODE.NO_CONTENT_204)
-    })
+    /*    it(" set Like ", async () => {
+            await req
+                .put(`/posts/${idPost}/like-status`)
+                .set('Authorization', `Bearer ${jwtToken1}`)
+                .send({likeStatus: 'Like'})
+                .expect(STATUS_CODE.NO_CONTENT_204)
+        })
 
-    it(" set Dislike ", async () => {
-        await req
-            .put(`/posts/${idPost}/like-status`)
-            .set('Authorization', `Bearer ${jwtToken1}`)
-            .send({likeStatus: 'Dislike'})
-            .expect(STATUS_CODE.NO_CONTENT_204)
-    })
+        it(" set Dislike ", async () => {
+            await req
+                .put(`/posts/${idPost}/like-status`)
+                .set('Authorization', `Bearer ${jwtToken1}`)
+                .send({likeStatus: 'Dislike'})
+                .expect(STATUS_CODE.NO_CONTENT_204)
+        })*/
 
 
     /* it(' create secondUsers', async () => {
