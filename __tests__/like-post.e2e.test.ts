@@ -39,7 +39,11 @@ describe('/like_posts', () => {
 
     let idBlog: string
     let idPost1: string
-
+    let idPost2: string
+    let idPost3: string
+    let idPost4: string
+    let idPost5: string
+    let idPost6: string
 
 
     const loginUser1 = 'post1111'
@@ -173,8 +177,6 @@ describe('/like_posts', () => {
     /////////////////////////////////////////////////////////////////
 
 
-
-
     it('create blog', async () => {
         const res = await req
             .post('/blogs')
@@ -190,7 +192,7 @@ describe('/like_posts', () => {
     })
 
 
-    it(' create newPost', async () => {
+    it(' create newPost1', async () => {
         const res = await req
             .post('/posts')
             .set('Authorization', `Basic ${loginPasswordBasic64}`)
@@ -203,21 +205,216 @@ describe('/like_posts', () => {
             .expect(STATUS_CODE.CREATED_201)
 
         idPost1 = res.body.id
-        console.log(res.body.extendedLikesInfo)
-
-
+        //console.log(res.body.extendedLikesInfo)
 
     })
 
-
-/*    it(" get correct post", async () => {
+    it(' create newPost2', async () => {
         const res = await req
-            .get(`/posts/${idPost1}`)
+            .post('/posts')
+            .set('Authorization', `Basic ${loginPasswordBasic64}`)
+            .send({
+                title: 'titlePost2',
+                shortDescription: 'shortDescriptionPost2',
+                content: 'contentPost2',
+                blogId: idBlog
+            })
+            .expect(STATUS_CODE.CREATED_201)
 
+        idPost2 = res.body.id
+    })
+
+    it(' create newPost3', async () => {
+        const res = await req
+            .post('/posts')
+            .set('Authorization', `Basic ${loginPasswordBasic64}`)
+            .send({
+                title: 'titlePost3',
+                shortDescription: 'shortDescriptionPost3',
+                content: 'contentPost3',
+                blogId: idBlog
+            })
+            .expect(STATUS_CODE.CREATED_201)
+
+        idPost3 = res.body.id
+    })
+
+    it(' create newPost4', async () => {
+        const res = await req
+            .post('/posts')
+            .set('Authorization', `Basic ${loginPasswordBasic64}`)
+            .send({
+                title: 'titlePost4',
+                shortDescription: 'shortDescriptionPost4',
+                content: 'contentPost4',
+                blogId: idBlog
+            })
+            .expect(STATUS_CODE.CREATED_201)
+
+        idPost4 = res.body.id
+    })
+
+
+    it(' create newPost5', async () => {
+        const res = await req
+            .post('/posts')
+            .set('Authorization', `Basic ${loginPasswordBasic64}`)
+            .send({
+                title: 'titlePost5',
+                shortDescription: 'shortDescriptionPost5',
+                content: 'contentPost5',
+                blogId: idBlog
+            })
+            .expect(STATUS_CODE.CREATED_201)
+
+        idPost5 = res.body.id
+    })
+
+
+    it(' create newPost6', async () => {
+        const res = await req
+            .post('/posts')
+            .set('Authorization', `Basic ${loginPasswordBasic64}`)
+            .send({
+                title: 'titlePost6',
+                shortDescription: 'shortDescriptionPost6',
+                content: 'contentPost6',
+                blogId: idBlog
+            })
+            .expect(STATUS_CODE.CREATED_201)
+
+        idPost6 = res.body.id
+    })
+
+    ////////////////////////////////////////////////////////////////
+    ////  СОЗДАЛ 6 ПОСТОВ
+    //////////////////////////////////////////////////////
+
+
+    it(" set Like post1  user1 ", async () => {
+        await req
+            .put(`/posts/${idPost1}/like-status`)
+            .set('Authorization', `Bearer ${jwtToken1}`)
+            .send({likeStatus: 'Like'})
+            .expect(STATUS_CODE.NO_CONTENT_204)
+    })
+
+    it(" set Like post1  user2 ", async () => {
+        await req
+            .put(`/posts/${idPost1}/like-status`)
+            .set('Authorization', `Bearer ${jwtToken2}`)
+            .send({likeStatus: 'Like'})
+            .expect(STATUS_CODE.NO_CONTENT_204)
+    })
+
+    it(" set Like post2  user2 ", async () => {
+        await req
+            .put(`/posts/${idPost2}/like-status`)
+            .set('Authorization', `Bearer ${jwtToken2}`)
+            .send({likeStatus: 'Like'})
+            .expect(STATUS_CODE.NO_CONTENT_204)
+    })
+
+    it(" set Like post2  user3 ", async () => {
+        await req
+            .put(`/posts/${idPost2}/like-status`)
+            .set('Authorization', `Bearer ${jwtToken3}`)
+            .send({likeStatus: 'Like'})
+            .expect(STATUS_CODE.NO_CONTENT_204)
+    })
+
+    it(" set Dislike post3 user1", async () => {
+        await req
+            .put(`/posts/${idPost3}/like-status`)
+            .set('Authorization', `Bearer ${jwtToken1}`)
+            .send({likeStatus: 'Dislike'})
+            .expect(STATUS_CODE.NO_CONTENT_204)
+    })
+
+    it(" set Like post4  user1 ", async () => {
+        await req
+            .put(`/posts/${idPost4}/like-status`)
+            .set('Authorization', `Bearer ${jwtToken1}`)
+            .send({likeStatus: 'Like'})
+            .expect(STATUS_CODE.NO_CONTENT_204)
+    })
+
+    it(" set Like post4  user2 ", async () => {
+        await req
+            .put(`/posts/${idPost4}/like-status`)
+            .set('Authorization', `Bearer ${jwtToken2}`)
+            .send({likeStatus: 'Like'})
+            .expect(STATUS_CODE.NO_CONTENT_204)
+    })
+
+    it(" set Like post4  user3 ", async () => {
+        await req
+            .put(`/posts/${idPost4}/like-status`)
+            .set('Authorization', `Bearer ${jwtToken3}`)
+            .send({likeStatus: 'Like'})
+            .expect(STATUS_CODE.NO_CONTENT_204)
+    })
+
+    it(" set Like post4  user4 ", async () => {
+        await req
+            .put(`/posts/${idPost4}/like-status`)
+            .set('Authorization', `Bearer ${jwtToken4}`)
+            .send({likeStatus: 'Like'})
+            .expect(STATUS_CODE.NO_CONTENT_204)
+    })
+
+    it(" set Like post5  user2 ", async () => {
+        await req
+            .put(`/posts/${idPost5}/like-status`)
+            .set('Authorization', `Bearer ${jwtToken2}`)
+            .send({likeStatus: 'Like'})
+            .expect(STATUS_CODE.NO_CONTENT_204)
+    })
+
+    it(" set Dislike post5 user3", async () => {
+        await req
+            .put(`/posts/${idPost5}/like-status`)
+            .set('Authorization', `Bearer ${jwtToken3}`)
+            .send({likeStatus: 'Dislike'})
+            .expect(STATUS_CODE.NO_CONTENT_204)
+    })
+
+    it(" set Like post6  user1 ", async () => {
+        await req
+            .put(`/posts/${idPost6}/like-status`)
+            .set('Authorization', `Bearer ${jwtToken1}`)
+            .send({likeStatus: 'Like'})
+            .expect(STATUS_CODE.NO_CONTENT_204)
+    })
+
+    it(" set Dislike post6 user2", async () => {
+        await req
+            .put(`/posts/${idPost6}/like-status`)
+            .set('Authorization', `Bearer ${jwtToken2}`)
+            .send({likeStatus: 'Dislike'})
+            .expect(STATUS_CODE.NO_CONTENT_204)
+    })
+
+    it(" get  posts  user1", async () => {
+        const res = await req
+            .get(`/posts`)
+            //.set('Authorization', `Bearer ${jwtToken1}`)
             .expect(STATUS_CODE.SUCCESS_200)
 
-            //console.log(res.body.extendedLikesInfo)
-    })*/
+        console.log(res.body.extendedLikesInfo)
+        console.log('+++++++++++++++++')
+        console.log(res.body)
+    })
+
+
+    /*    it(" get correct post", async () => {
+            const res = await req
+                .get(`/posts/${idPost1}`)
+
+                .expect(STATUS_CODE.SUCCESS_200)
+
+                //console.log(res.body.extendedLikesInfo)
+        })*/
 
 
     /*    it('create post for correct blog', async () => {
