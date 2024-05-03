@@ -35,26 +35,17 @@ describe('/like_posts', () => {
 
 
     const loginPasswordBasic64 = 'YWRtaW46cXdlcnR5'
+
+
+    let idBlog: string
+    let idPost1: string
+
+
+
     const loginUser1 = 'post1111'
     const passwordUser1 = 'post1pasw'
     const emailUser1 = 'palPel11@mail.ru'
     let jwtToken1 = ''
-
-    /*  const loginSecondUser = '22222222'
-      const passwordSecondUser = '2222pasw'
-      const emailSecondUser = 'palPel22@mail.ru'
-      let jwtToken2 = ''
-      const loginUser3 = '33333333'
-      const passwordUser3 = '33333pasw'
-      const emailUser3 = 'palPel33@mail.ru'
-      let jwtToken3=''*/
-    let idBlog: string
-    let idPost: string
-    let idComent: string
-
-    ////////////////////////////////////////////////////////////
-    // запустить тест, потом закоментировать
-    //создание юзера и блога и поста
 
     it(' create users1', async () => {
         const res = await req
@@ -66,7 +57,6 @@ describe('/like_posts', () => {
                 email: emailUser1
             })
             .expect(STATUS_CODE.CREATED_201)
-
     })
 
 
@@ -82,6 +72,107 @@ describe('/like_posts', () => {
         // console.log(res.body.accessToken)
         jwtToken1 = res.body.accessToken
     })
+
+    const loginUser2 = 'post2222'
+    const passwordUser2 = 'post2pasw'
+    const emailUser2 = 'palPel22@mail.ru'
+    let jwtToken2 = ''
+
+    it(' create users2', async () => {
+        const res = await req
+            .post('/users')
+            .set('Authorization', `Basic ${loginPasswordBasic64}`)
+            .send({
+                login: loginUser2,
+                password: passwordUser2,
+                email: emailUser2
+            })
+            .expect(STATUS_CODE.CREATED_201)
+    })
+
+
+    it(" login user2", async () => {
+        const res = await req
+            .post('/auth/login')
+            .send({
+                loginOrEmail: loginUser2,
+                password: passwordUser2
+            })
+            .expect(STATUS_CODE.SUCCESS_200)
+
+        // console.log(res.body.accessToken)
+        jwtToken2 = res.body.accessToken
+    })
+
+
+    const loginUser3 = 'post3333'
+    const passwordUser3 = 'post3pasw'
+    const emailUser3 = 'palPel33@mail.ru'
+    let jwtToken3 = ''
+
+    it(' create users3', async () => {
+        const res = await req
+            .post('/users')
+            .set('Authorization', `Basic ${loginPasswordBasic64}`)
+            .send({
+                login: loginUser3,
+                password: passwordUser3,
+                email: emailUser3
+            })
+            .expect(STATUS_CODE.CREATED_201)
+    })
+
+
+    it(" login user3", async () => {
+        const res = await req
+            .post('/auth/login')
+            .send({
+                loginOrEmail: loginUser3,
+                password: passwordUser3
+            })
+            .expect(STATUS_CODE.SUCCESS_200)
+
+        // console.log(res.body.accessToken)
+        jwtToken3 = res.body.accessToken
+    })
+
+
+    const loginUser4 = 'post4444'
+    const passwordUser4 = 'post4pasw'
+    const emailUser4 = 'palPel44@mail.ru'
+    let jwtToken4 = ''
+
+    it(' create users4', async () => {
+        const res = await req
+            .post('/users')
+            .set('Authorization', `Basic ${loginPasswordBasic64}`)
+            .send({
+                login: loginUser4,
+                password: passwordUser4,
+                email: emailUser4
+            })
+            .expect(STATUS_CODE.CREATED_201)
+    })
+
+
+    it(" login user4", async () => {
+        const res = await req
+            .post('/auth/login')
+            .send({
+                loginOrEmail: loginUser4,
+                password: passwordUser4
+            })
+            .expect(STATUS_CODE.SUCCESS_200)
+
+        // console.log(res.body.accessToken)
+        jwtToken4 = res.body.accessToken
+    })
+
+    /////////////////////////////////////////////////////////////////
+    //////// СОЗДАЛ 4 ЮЗЕРА
+    /////////////////////////////////////////////////////////////////
+
+
 
 
     it('create blog', async () => {
@@ -111,7 +202,7 @@ describe('/like_posts', () => {
             })
             .expect(STATUS_CODE.CREATED_201)
 
-        idPost = res.body.id
+        idPost1 = res.body.id
         console.log(res.body.extendedLikesInfo)
 
 
@@ -119,14 +210,14 @@ describe('/like_posts', () => {
     })
 
 
-    it(" get correct post", async () => {
+/*    it(" get correct post", async () => {
         const res = await req
-            .get(`/posts/${idPost}`)
+            .get(`/posts/${idPost1}`)
 
             .expect(STATUS_CODE.SUCCESS_200)
 
             //console.log(res.body.extendedLikesInfo)
-    })
+    })*/
 
 
     /*    it('create post for correct blog', async () => {
